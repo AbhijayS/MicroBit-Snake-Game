@@ -1,0 +1,12 @@
+{
+  "name": "snake",
+  "version": "0.0.0",
+  "bin": "./source",
+  "private": true,
+  "description": "5x5 Atari Snake game",
+  "author": "Abhijay",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "microbit": "lancaster-university/microbit"
+  }
+}
