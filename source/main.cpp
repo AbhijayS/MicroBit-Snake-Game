@@ -23,11 +23,13 @@ public:
   int score;
   DIRECTION direction;
   FixedStack* body;
+  bool setDirection;
 
   Snake() {
-    X = 0;
-    Y = 0;
+    X = uBit.random(WIDTH-2);
+    Y = uBit.random(HEIGHT);
     score = 1;
+    setDirection = true;
     direction = RIGHT;
     body = new FixedStack(1);
     body->push(X, Y);
@@ -58,6 +60,7 @@ public:
       Apple.refresh();
       score++;
     }
+    setDirection = true;
   }
 
   void display(MicroBitImage m, int brightness) {
@@ -67,7 +70,7 @@ public:
       tmp = tmp->next;
     }
   }
-  
+
   bool occupied(int x, int y) {
     Node* n = this->body->head;
     while (n) {
@@ -78,7 +81,7 @@ public:
     }
     return false;
   }
-  
+
   bool selfDestruct() {
     if (this->body->length >= 5) {
       Node* n = this->body->head->next->next->next->next;
@@ -91,22 +94,20 @@ public:
     }
     return false;
   }
-  
+
 } Body;
 
 Pixel::Pixel() {
   uBit.init();
-  X = uBit.random(WIDTH);
-  Y = uBit.random(HEIGHT);
+  (this->X) = uBit.random(2)+3;
+  (this->Y) = uBit.random(HEIGHT);
 }
 
 void Pixel::refresh() {
-  (this->X) = uBit.random(WIDTH);
-  (this->Y) = uBit.random(HEIGHT);
-  while (Body.occupied(this->X, this->Y)) {
+  do {
     (this->X) = uBit.random(WIDTH);
     (this->Y) = uBit.random(HEIGHT);
-  }
+  } while(Body.occupied(this->X, this->Y));
 }
 
 void Pixel::display(MicroBitImage m, int brightness) {
@@ -114,34 +115,44 @@ void Pixel::display(MicroBitImage m, int brightness) {
 }
 
 void onButtonA(MicroBitEvent e) {
-  switch (Body.direction) {
-    case UP:    Body.direction = LEFT;
-                break;
-    case DOWN:  Body.direction = RIGHT;
-                break;
-    case LEFT:  Body.direction = DOWN;
-                break;
-    case RIGHT: Body.direction = UP;
-                break;
+  if (Body.setDirection) {
+    switch (Body.direction) {
+      case UP:    Body.direction = LEFT;
+      break;
+      case DOWN:  Body.direction = RIGHT;
+      break;
+      case LEFT:  Body.direction = DOWN;
+      break;
+      case RIGHT: Body.direction = UP;
+      break;
+    }
+    Body.setDirection = false;
   }
 }
 
 void onButtonB(MicroBitEvent e) {
-  switch (Body.direction) {
-    case UP:    Body.direction = RIGHT;
-                break;
-    case DOWN:  Body.direction = LEFT;
-                break;
-    case LEFT:  Body.direction = UP;
-                break;
-    case RIGHT: Body.direction = DOWN;
-                break;
+  if (Body.setDirection) {
+    switch (Body.direction) {
+      case UP:    Body.direction = RIGHT;
+      break;
+      case DOWN:  Body.direction = LEFT;
+      break;
+      case LEFT:  Body.direction = UP;
+      break;
+      case RIGHT: Body.direction = DOWN;
+      break;
+    }
+    Body.setDirection = false;
   }
 }
 
 int main() {
   uBit.init();
   uBit.display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
+  uBit.display.setBrightness(100);
+  uBit.display.scroll("SNAKE GAME", 100);
+  uBit.display.print("3 2 1", 500);
+  // uBit.display.scroll("Go!", 80);
 
   const uint8_t game[] = {
     0, 0, 0, 0, 0,
@@ -150,15 +161,16 @@ int main() {
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0,
   };
-
-  uBit.messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_EVT_ANY, onButtonB);
-  uBit.messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_EVT_ANY, onButtonA);
-
   MicroBitImage map(WIDTH, HEIGHT, game);
+
+  uBit.messageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_EVT_ANY, onButtonA);
+  uBit.messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_EVT_ANY, onButtonB);
+
   map.setPixelValue(Body.X, Body.Y, 10);
   map.setPixelValue(Apple.X, Apple.Y, 255);
+  uBit.display.print(map);
   uBit.sleep(1000);
-  
+
   while (1) {
     map.clear();
     Body.move();
@@ -169,13 +181,15 @@ int main() {
     Body.display(map, 10);
     Apple.display(map, 255);
     uBit.display.print(map);
-    
-    uBit.sleep(500);
+
+    uBit.sleep(700);
   }
 
   while (1) {
-    uBit.display.scroll("GAME OVER!");
-    uBit.display.scroll("SCORE ");
-    uBit.display.scroll(Body.score);
+    uBit.display.clear();
+    uBit.display.scroll("GAME OVER!", 80);
+    uBit.display.scroll("SCORE:", 80);
+    uBit.display.print(Body.score);
+    uBit.sleep(1000);
   }
 }
