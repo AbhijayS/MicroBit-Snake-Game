@@ -5,6 +5,7 @@ MicroBit uBit;
 enum DIRECTION {LEFT, RIGHT, UP, DOWN};
 const uint8_t WIDTH = 5;
 const uint8_t HEIGHT = 5;
+bool FINISHED;
 
 class Pixel {
 public:
@@ -58,7 +59,10 @@ public:
     if (X == (Apple.X) && Y == (Apple.Y)) {
       body->incrementMaxSize(tmp->x, tmp->y);
       score++;
-      Apple.refresh();
+      if (score == 25)
+        FINISHED = true;
+      else
+        Apple.refresh();
     }
     
     delete tmp;
@@ -150,6 +154,7 @@ void onButtonB(MicroBitEvent e) {
 
 int main() {
   uBit.init();
+  FINISHED = false;
   uBit.display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
   uBit.display.setBrightness(100);
   uBit.display.print("SNAKE 3 2 1", 500);
@@ -174,23 +179,55 @@ int main() {
   while (1) {
     map.clear();
     Body.move();
-    
-    if (Body.offScreen() || Body.selfDestruct())
+
+    if (Body.offScreen() || Body.selfDestruct() || FINISHED)
       break;
 
     Body.display(map, 10);
     Apple.display(map, 255);
     uBit.display.print(map);
-    
+
     uBit.sleep(750);
   }
 
   uBit.display.clear();
-  uBit.display.scroll("GAME OVER", 70);
-  uBit.display.scroll("SCORE:", 70);
 
-  while (1) {
-    uBit.display.print(Body.score);
+  if (FINISHED) {
+    MicroBitImage fill("255,255,255,255,255\n255,255,255,255,255\n255,255,255,255,255\n255,255,255,255,255\n255,255,255,255,255\n");
+    uBit.display.print(fill);
+    MicroBitImage f1("0,0,0,0,0\n0,0,0,0,0\n0,0,255,0,0\n0,0,0,0,0\n0,0,0,0,0\n");
+    MicroBitImage f2("0,0,0,0,0\n0,255,255,255,0\n0,255,0,255,0\n0,255,255,255,0\n0,0,0,0,0\n");
+    MicroBitImage f3("255,255,255,255,255\n255,0,0,0,255\n255,0,0,0,255\n255,0,0,0,255\n255,255,255,255,255\n");
+  
     uBit.sleep(1000);
+    while (1) {
+      uBit.display.clear();
+      
+      uBit.display.print(f2);
+      uBit.sleep(500);
+      
+      uBit.display.print(f1);
+      uBit.sleep(500);
+      
+      uBit.display.clear();
+      uBit.sleep(500);
+      
+      uBit.display.print(f1);
+      uBit.sleep(500);
+      
+      uBit.display.print(f2);
+      uBit.sleep(500);
+      
+      uBit.display.print(f3);
+      uBit.sleep(500);
+    }
+  }else{
+    uBit.display.scroll("GAME OVER", 70);
+    uBit.display.scroll("SCORE:", 70);
+
+    while (1) {
+      uBit.display.print(Body.score);
+      uBit.sleep(1000);
+    }
   }
 }
