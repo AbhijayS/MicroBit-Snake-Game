@@ -7,26 +7,25 @@ FixedStack::FixedStack(int max) {
   this->length = 0;
 }
 
-Node* FixedStack::push(int x, int y) {
+Node* FixedStack::push(uint8_t x, uint8_t y) {
   Node* node = new Node(x, y);
 
   if (!isEmpty()) {
+    Node* temp = this->head;
+    this->head = node;
+    node->next = temp;
+
     if (length < maxLength) {
-      Node* temp = this->head;
-      this->head = node;
-      node->next = temp;
       this->length++;
       return NULL;
     }else{
-      Node* temp = this->head;
-      this->head = node;
-      node->next = temp;
-
       temp = this->head;
       while (temp->next->next) {
         temp = temp->next;
       }
-      Node* tr = temp->next;
+
+      Node* tr = new Node(temp->next->x, temp->next->y);
+      delete temp->next;
       temp->next = NULL;
       return tr;
     }
@@ -44,7 +43,7 @@ bool FixedStack::isEmpty() {
   return true;
 }
 
-void FixedStack::incrementMaxSize(int x, int y) {
+void FixedStack::incrementMaxSize(uint8_t x, uint8_t y) {
   Node* temp = this->head;
   while (temp->next) {
     temp = temp->next;

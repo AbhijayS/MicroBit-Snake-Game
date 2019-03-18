@@ -3,11 +3,11 @@
 
 class Node {
 public:
-  int x;
-  int y;
+  uint8_t x;
+  uint8_t y;
   Node* next;
 
-  Node(int x0, int y0) {
+  Node(uint8_t x0, uint8_t y0) {
     next = NULL;
     x = x0;
     y = y0;
@@ -20,8 +20,8 @@ public:
   int maxLength;
   int length;
   FixedStack(int size);
-  Node* push(int x, int y);
+  Node* push(uint8_t x, uint8_t y);
   bool isEmpty();
-  void incrementMaxSize(int x, int y);
+  void incrementMaxSize(uint8_t x, uint8_t y);
 };
 #endif

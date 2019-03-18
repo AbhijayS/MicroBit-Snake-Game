@@ -1,26 +1,26 @@
 #include "MicroBit.h"
 #include "FixedStack.h"
-#define WIDTH 5
-#define HEIGHT 5
 
 MicroBit uBit;
 enum DIRECTION {LEFT, RIGHT, UP, DOWN};
+const uint8_t WIDTH = 5;
+const uint8_t HEIGHT = 5;
 
 class Pixel {
 public:
-  int X;
-  int Y;
+  uint8_t X;
+  uint8_t Y;
   Pixel();
   void refresh();
-  void display(MicroBitImage m, int brightness);
+  void display(MicroBitImage m, uint8_t brightness);
 } Apple;
 
 class Snake {
 public:
 
-  int X;
-  int Y;
-  int score;
+  signed char X;
+  signed char Y;
+  uint8_t score;
   DIRECTION direction;
   FixedStack* body;
   bool setDirection;
@@ -63,7 +63,7 @@ public:
     setDirection = true;
   }
 
-  void display(MicroBitImage m, int brightness) {
+  void display(MicroBitImage m, uint8_t brightness) {
     Node* tmp = body->head;
     while (tmp) {
       m.setPixelValue(tmp->x, tmp->y, brightness);
@@ -71,7 +71,7 @@ public:
     }
   }
 
-  bool occupied(int x, int y) {
+  bool occupied(uint8_t x, uint8_t y) {
     Node* n = this->body->head;
     while (n) {
       if (n->x == x && n->y == y) {
@@ -110,7 +110,7 @@ void Pixel::refresh() {
   } while(Body.occupied(this->X, this->Y));
 }
 
-void Pixel::display(MicroBitImage m, int brightness) {
+void Pixel::display(MicroBitImage m, uint8_t brightness) {
   m.setPixelValue(X, Y, brightness);
 }
 
@@ -150,9 +150,7 @@ int main() {
   uBit.init();
   uBit.display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
   uBit.display.setBrightness(100);
-  uBit.display.scroll("SNAKE GAME", 100);
-  uBit.display.print("3 2 1", 500);
-  // uBit.display.scroll("Go!", 80);
+  uBit.display.print("SNAKE 3 2 1", 500);
 
   const uint8_t game[] = {
     0, 0, 0, 0, 0,
@@ -182,13 +180,14 @@ int main() {
     Apple.display(map, 255);
     uBit.display.print(map);
 
-    uBit.sleep(700);
+    uBit.sleep(750);
   }
 
+  uBit.display.clear();
+  uBit.display.scroll("GAME OVER", 70);
+  uBit.display.scroll("SCORE:", 70);
+
   while (1) {
-    uBit.display.clear();
-    uBit.display.scroll("GAME OVER!", 80);
-    uBit.display.scroll("SCORE:", 80);
     uBit.display.print(Body.score);
     uBit.sleep(1000);
   }
