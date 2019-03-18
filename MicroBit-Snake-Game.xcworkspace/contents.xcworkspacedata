@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:LICENSE">
+   </FileRef>
+   <FileRef
+      location = "group:module.json">
+   </FileRef>
+   <FileRef
+      location = "group:package.json">
+   </FileRef>
+   <FileRef
+      location = "group:source">
+   </FileRef>
+   <FileRef
+      location = "group:yotta_modules">
+   </FileRef>
+   <FileRef
+      location = "group:yotta_targets">
+   </FileRef>
+</Workspace>

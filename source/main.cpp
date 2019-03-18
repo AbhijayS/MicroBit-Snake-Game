@@ -20,12 +20,14 @@ public:
 
   int X;
   int Y;
+  int score;
   DIRECTION direction;
   FixedStack* body;
 
   Snake() {
     X = 0;
     Y = 0;
+    score = 1;
     direction = RIGHT;
     body = new FixedStack(1);
     body->push(X, Y);
@@ -54,6 +56,7 @@ public:
     if (X == (Apple.X) && Y == (Apple.Y)) {
       body->incrementMaxSize(tmp->x, tmp->y);
       Apple.refresh();
+      score++;
     }
   }
 
@@ -64,6 +67,31 @@ public:
       tmp = tmp->next;
     }
   }
+  
+  bool occupied(int x, int y) {
+    Node* n = this->body->head;
+    while (n) {
+      if (n->x == x && n->y == y) {
+        return true;
+      }
+      n = n->next;
+    }
+    return false;
+  }
+  
+  bool selfDestruct() {
+    if (this->body->length >= 5) {
+      Node* n = this->body->head->next->next->next->next;
+      while (n) {
+        if (n->x == this->body->head->x && n->y == this->body->head->y) {
+          return true;
+        }
+        n = n->next;
+      }
+    }
+    return false;
+  }
+  
 } Body;
 
 Pixel::Pixel() {
@@ -75,6 +103,10 @@ Pixel::Pixel() {
 void Pixel::refresh() {
   (this->X) = uBit.random(WIDTH);
   (this->Y) = uBit.random(HEIGHT);
+  while (Body.occupied(this->X, this->Y)) {
+    (this->X) = uBit.random(WIDTH);
+    (this->Y) = uBit.random(HEIGHT);
+  }
 }
 
 void Pixel::display(MicroBitImage m, int brightness) {
@@ -109,6 +141,7 @@ void onButtonB(MicroBitEvent e) {
 
 int main() {
   uBit.init();
+  uBit.display.setDisplayMode(DISPLAY_MODE_GREYSCALE);
 
   const uint8_t game[] = {
     0, 0, 0, 0, 0,
@@ -122,23 +155,27 @@ int main() {
   uBit.messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_EVT_ANY, onButtonA);
 
   MicroBitImage map(WIDTH, HEIGHT, game);
-  map.setPixelValue(Body.X, Body.Y, 100);
-  map.setPixelValue(Apple.X, Apple.Y, 150);
-
+  map.setPixelValue(Body.X, Body.Y, 10);
+  map.setPixelValue(Apple.X, Apple.Y, 255);
+  uBit.sleep(1000);
+  
   while (1) {
-    Body.move();
     map.clear();
-    Body.display(map, 200);
-    Apple.display(map, 255);
-    uBit.display.print(map);
+    Body.move();
 
-    if (Body.offScreen())
+    if (Body.offScreen() || Body.selfDestruct())
       break;
 
-    uBit.sleep(1000);
+    Body.display(map, 10);
+    Apple.display(map, 255);
+    uBit.display.print(map);
+    
+    uBit.sleep(500);
   }
 
   while (1) {
-    uBit.display.print("GAME OVER!");
+    uBit.display.scroll("GAME OVER!");
+    uBit.display.scroll("SCORE ");
+    uBit.display.scroll(Body.score);
   }
 }
