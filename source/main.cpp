@@ -57,9 +57,11 @@ public:
 
     if (X == (Apple.X) && Y == (Apple.Y)) {
       body->incrementMaxSize(tmp->x, tmp->y);
-      Apple.refresh();
       score++;
+      Apple.refresh();
     }
+    
+    delete tmp;
     setDirection = true;
   }
 
@@ -172,14 +174,14 @@ int main() {
   while (1) {
     map.clear();
     Body.move();
-
+    
     if (Body.offScreen() || Body.selfDestruct())
       break;
 
     Body.display(map, 10);
     Apple.display(map, 255);
     uBit.display.print(map);
-
+    
     uBit.sleep(750);
   }
 

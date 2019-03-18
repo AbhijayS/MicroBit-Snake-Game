@@ -19,15 +19,14 @@ Node* FixedStack::push(uint8_t x, uint8_t y) {
       this->length++;
       return NULL;
     }else{
-      temp = this->head;
-      while (temp->next->next) {
+        temp = this->head;
+        while (temp->next->next) {
         temp = temp->next;
-      }
+        }
 
-      Node* tr = new Node(temp->next->x, temp->next->y);
-      delete temp->next;
-      temp->next = NULL;
-      return tr;
+        Node* tr = temp->next;
+        temp->next = NULL;
+        return tr;
     }
   }else {
     node->next = NULL;
