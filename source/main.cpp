@@ -64,7 +64,7 @@ public:
       else
         Apple.refresh();
     }
-    
+
     delete tmp;
     setDirection = true;
   }
@@ -198,26 +198,26 @@ int main() {
     MicroBitImage f1("0,0,0,0,0\n0,0,0,0,0\n0,0,255,0,0\n0,0,0,0,0\n0,0,0,0,0\n");
     MicroBitImage f2("0,0,0,0,0\n0,255,255,255,0\n0,255,0,255,0\n0,255,255,255,0\n0,0,0,0,0\n");
     MicroBitImage f3("255,255,255,255,255\n255,0,0,0,255\n255,0,0,0,255\n255,0,0,0,255\n255,255,255,255,255\n");
-  
+
     uBit.sleep(1000);
     while (1) {
       uBit.display.clear();
-      
+
       uBit.display.print(f2);
       uBit.sleep(500);
-      
+
       uBit.display.print(f1);
       uBit.sleep(500);
-      
+
       uBit.display.clear();
       uBit.sleep(500);
-      
+
       uBit.display.print(f1);
       uBit.sleep(500);
-      
+
       uBit.display.print(f2);
       uBit.sleep(500);
-      
+
       uBit.display.print(f3);
       uBit.sleep(500);
     }
