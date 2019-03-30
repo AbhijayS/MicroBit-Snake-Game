@@ -41,8 +41,7 @@ private:
 
 public:
   Node* head; // TO:DO change to void*
-  int maxLength;
-  int length;
+  int length; // TO:DO change all uses to the "size" variable
   FixedStack(int size);
   Node* push(uint8_t x, uint8_t y);
   bool isEmpty();

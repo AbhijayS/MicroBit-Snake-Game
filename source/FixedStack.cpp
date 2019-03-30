@@ -3,7 +3,7 @@
 
 FixedStack::FixedStack(int max) {
   this->head = NULL;
-  this->maxLength = max;
+  this->max_size = max;
   this->length = 0;
 }
 
@@ -15,7 +15,7 @@ Node* FixedStack::push(uint8_t x, uint8_t y) {
     this->head = node;
     node->next = temp;
 
-    if (length < maxLength) {
+    if (length < max_size) {
       this->length++;
       return NULL;
     }else{
@@ -48,6 +48,6 @@ void FixedStack::incrementMaxSize(uint8_t x, uint8_t y) {
     temp = temp->next;
   }
   temp->next = new Node(x, y);
-  this->maxLength++;
+  this->max_size++;
   this->length++;
 }
