@@ -2,10 +2,10 @@
 #include "FixedStack.h"
 
 MicroBit uBit;
+bool FINISHED;
 enum DIRECTION {LEFT, RIGHT, UP, DOWN};
 const uint8_t WIDTH = 5;
 const uint8_t HEIGHT = 5;
-bool FINISHED;
 
 class Pixel {
 public:
@@ -14,11 +14,10 @@ public:
   Pixel();
   void refresh();
   void display(MicroBitImage m, uint8_t brightness);
-} Apple;
+} Fruit;
 
 class Snake {
 public:
-
   signed char X;
   signed char Y;
   uint8_t score;
@@ -33,7 +32,7 @@ public:
     setDirection = true;
     direction = RIGHT;
     body = new FixedStack(1);
-    body->push(X, Y);
+    body->push(new Node(X, Y));
   }
 
   bool offScreen() {
@@ -54,48 +53,45 @@ public:
                   break;
     }
 
-    Node* tmp = body->push(X, Y);
-
-    if (X == (Apple.X) && Y == (Apple.Y)) {
-      body->incrementMaxSize(tmp->x, tmp->y);
+    if (X == (Fruit.X) && Y == (Fruit.Y)) {
+      body->incrementMaxSize(new Node(X, Y));
       score++;
       if (score == 25)
         FINISHED = true;
       else
-        Apple.refresh();
-    }
+        Fruit.refresh();
+    }else delete body->push(new Node(X, Y));
 
-    delete tmp;
     setDirection = true;
   }
 
   void display(MicroBitImage m, uint8_t brightness) {
-    Node* tmp = body->head;
-    while (tmp) {
-      m.setPixelValue(tmp->x, tmp->y, brightness);
-      tmp = tmp->next;
+    Node* itr = body->peek();
+    while (itr) {
+      m.setPixelValue(itr->x_cord, itr->y_cord, brightness);
+      itr = itr->next;
     }
   }
 
   bool occupied(uint8_t x, uint8_t y) {
-    Node* n = this->body->head;
-    while (n) {
-      if (n->x == x && n->y == y) {
+    Node* itr = this->body->peek();
+    while (itr) {
+      if (itr->x_cord == x && itr->y_cord == y) {
         return true;
       }
-      n = n->next;
+      itr = itr->next;
     }
     return false;
   }
 
   bool selfDestruct() {
-    if (this->body->length >= 5) {
-      Node* n = this->body->head->next->next->next->next;
-      while (n) {
-        if (n->x == this->body->head->x && n->y == this->body->head->y) {
+    if (this->body->length() >= 5) {
+      Node* itr = this->body->peek()->next->next->next->next;
+      while (itr) {
+        if (itr->x_cord == this->body->peek()->x_cord && itr->y_cord == this->body->peek()->y_cord) {
           return true;
         }
-        n = n->next;
+        itr = itr->next;
       }
     }
     return false;
@@ -172,7 +168,7 @@ int main() {
   uBit.messageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_EVT_ANY, onButtonB);
 
   map.setPixelValue(Body.X, Body.Y, 10);
-  map.setPixelValue(Apple.X, Apple.Y, 255);
+  map.setPixelValue(Fruit.X, Fruit.Y, 255);
   uBit.display.print(map);
   uBit.sleep(1000);
 
@@ -184,7 +180,7 @@ int main() {
       break;
 
     Body.display(map, 10);
-    Apple.display(map, 255);
+    Fruit.display(map, 255);
     uBit.display.print(map);
 
     uBit.sleep(750);

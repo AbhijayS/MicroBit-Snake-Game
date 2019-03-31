@@ -10,12 +10,10 @@
 */
 class Node {
 
-private:
-  Node* next; // (Internal) Pointer to the next Node
-
 public:
   uint8_t x_cord; // x-coordinate of the pixel
   uint8_t y_cord; // y-coordinate of the pixel
+  Node* next; // (Internal) Pointer to the next Node
 
   // Initializing the data fields
   Node(uint8_t x, uint8_t y) {
@@ -31,21 +29,22 @@ public:
               The FixedStack has a Fixed Max Size, meaning that items at the bottom of the stack will be removed as additional items are pushed onto the stack
               The Max Size can be incremented, but cannot be reduced
 
-  Usage:      The Snake class (defined in the main.cpp file) uses a FixedStack to contruct the "body" of the "Snake"
+  Usage:      The Snake class (defined in the "main.cpp" file) uses a FixedStack to contruct the "body" of the "Snake"
 */
 class FixedStack {
 
 private:
   int max_size; // Max Size of the FixedStack
-  int size; // Current size of the FixedStack (excludes NULL elements)
+  int size; // Current size of the FixedStack (Excludes NULL elements)
+  Node* head;
 
 public:
-  Node* head; // TO:DO change to void*
-  int length; // TO:DO change all uses to the "size" variable
   FixedStack(int size);
-  Node* push(uint8_t x, uint8_t y);
+  int length();
   bool isEmpty();
-  void incrementMaxSize(uint8_t x, uint8_t y);
+  Node* peek();
+  Node* push(Node* node);
+  void incrementMaxSize(Node* node);
 
 };
 
