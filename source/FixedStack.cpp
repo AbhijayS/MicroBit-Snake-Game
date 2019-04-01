@@ -7,7 +7,7 @@ FixedStack::FixedStack(int max) {
   this->size = 0;
 }
 
-int FixedStack::length() { return this->size; }
+int FixedStack::size() { return this->size; }
 
 bool FixedStack::isEmpty() {
   if (this->head)

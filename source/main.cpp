@@ -2,19 +2,36 @@
 #include "FixedStack.h"
 
 MicroBit uBit;
-bool FINISHED;
-enum DIRECTION {LEFT, RIGHT, UP, DOWN};
-const uint8_t WIDTH = 5;
-const uint8_t HEIGHT = 5;
+bool FINISHED; // True if player WINS the game
+enum DIRECTION {LEFT, RIGHT, UP, DOWN}; // Game Controls
+const uint8_t WIDTH = 5; // WIDTH of the LED matrix
+const uint8_t HEIGHT = 5; // HEIGHT of the LED matrix
 
-class Pixel {
+class RandomPixel {
 public:
   uint8_t X;
   uint8_t Y;
-  Pixel();
+  RandomPixel();
   void refresh();
   void display(MicroBitImage m, uint8_t brightness);
 } Fruit;
+
+RandomPixel::RandomPixel() {
+  uBit.init();
+  (this->X) = uBit.random(2)+3;
+  (this->Y) = uBit.random(HEIGHT);
+}
+
+void RandomPixel::refresh() {
+  do {
+    (this->X) = uBit.random(WIDTH);
+    (this->Y) = uBit.random(HEIGHT);
+  } while(Body.occupied(this->X, this->Y));
+}
+
+void RandomPixel::display(MicroBitImage m, uint8_t brightness) {
+  m.setPixelValue(X, Y, brightness);
+}
 
 class Snake {
 public:
@@ -85,7 +102,7 @@ public:
   }
 
   bool selfDestruct() {
-    if (this->body->length() >= 5) {
+    if (this->body->size() >= 5) {
       Node* itr = this->body->peek()->next->next->next->next;
       while (itr) {
         if (itr->x_cord == this->body->peek()->x_cord && itr->y_cord == this->body->peek()->y_cord) {
@@ -98,23 +115,6 @@ public:
   }
 
 } Body;
-
-Pixel::Pixel() {
-  uBit.init();
-  (this->X) = uBit.random(2)+3;
-  (this->Y) = uBit.random(HEIGHT);
-}
-
-void Pixel::refresh() {
-  do {
-    (this->X) = uBit.random(WIDTH);
-    (this->Y) = uBit.random(HEIGHT);
-  } while(Body.occupied(this->X, this->Y));
-}
-
-void Pixel::display(MicroBitImage m, uint8_t brightness) {
-  m.setPixelValue(X, Y, brightness);
-}
 
 void onButtonA(MicroBitEvent e) {
   if (Body.setDirection) {
@@ -170,6 +170,7 @@ int main() {
   map.setPixelValue(Body.X, Body.Y, 10);
   map.setPixelValue(Fruit.X, Fruit.Y, 255);
   uBit.display.print(map);
+
   uBit.sleep(1000);
 
   while (1) {
