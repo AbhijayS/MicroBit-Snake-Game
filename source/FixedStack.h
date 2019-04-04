@@ -35,16 +35,16 @@ class FixedStack {
 
 private:
   int max_size; // Max Size of the FixedStack
-  int size; // Current size of the FixedStack (Excludes NULL elements)
+  int stack_size; // Current size of the FixedStack (Excludes NULL elements)
   Node* head; // Head of the FixedStack
 
 public:
-  FixedStack(int size); // initialize the FixedStack with a max size
-  int length(); // returns the current size of the FixedStack
-  bool isEmpty(); // returns true if the FixedStack is empty
-  Node* peek(); // returns the head Node of the FixedStack
-  Node* push(Node* node); // push a Node onto the FixedStack. Returns the last Node if overflows and NULL otherwise.
-  void incrementMaxSize(Node* node); // increase the max size of the FixedStack by 1 and push a new Node onto the FixedStack
+  FixedStack(int size); // Initialize the FixedStack with a max size
+  int size(); // Returns the current size of the FixedStack
+  bool isEmpty(); // Returns true if the FixedStack is empty
+  Node* peek(); //Rreturns the head Node of the FixedStack
+  Node* push(Node* node); // Push a Node onto the FixedStack. Returns the last Node if overflows and NULL otherwise.
+  void incrementMaxSize(Node* node); // Increase the max size of the FixedStack by 1 and push a new Node onto the FixedStack
 
 };
 

@@ -4,10 +4,10 @@
 FixedStack::FixedStack(int max) {
   this->head = NULL;
   this->max_size = max;
-  this->size = 0;
+  this->stack_size = 0;
 }
 
-int FixedStack::size() { return this->size; }
+int FixedStack::size() { return this->stack_size; }
 
 bool FixedStack::isEmpty() {
   if (this->head)
@@ -26,8 +26,8 @@ Node* FixedStack::push(Node* node) {
     this->head = node;
     node->next = temp;
 
-    if (size < max_size) {
-      this->size++;
+    if (stack_size < max_size) {
+      this->stack_size++;
       return NULL;
     }else{
         temp = this->head;
@@ -42,7 +42,7 @@ Node* FixedStack::push(Node* node) {
   }else {
     node->next = NULL;
     this->head = node;
-    this->size++;
+    this->stack_size++;
     return NULL;
   }
 }
@@ -52,5 +52,5 @@ void FixedStack::incrementMaxSize(Node* node) {
   node->next = this->head;
   this->head = node;
   this->max_size++;
-  this->size++;
+  this->stack_size++;
 }
